@@ -3,8 +3,8 @@ set -e
 
 echo "👉 开始安装指定版本 LNMP + Webmin 面板"
 
-echo "👉 更新系统"
-apt update && apt upgrade -y
+#echo "👉 更新系统"
+#apt update && apt upgrade -y
 
 echo "👉 安装基础依赖"
 apt install -y curl gnupg2 ca-certificates lsb-release software-properties-common
