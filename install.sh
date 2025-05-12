@@ -15,7 +15,7 @@ apt install -y curl gnupg2 ca-certificates lsb-release software-properties-commo
 echo "👉 安装 Nginx 1.18.0"
 add-apt-repository -y ppa:ondrej/nginx
 apt update
-apt install -y nginx=1.18.0-0ubuntu1
+apt install -y nginx
 
 # ----------------------------
 # 安装 MySQL 5.7
