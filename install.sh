@@ -17,12 +17,28 @@ add-apt-repository -y ppa:ondrej/nginx
 apt update
 apt install -y nginx
 
-# ----------------------------
-# 安装 MySQL 5.7
-# ----------------------------
 echo "👉 安装 MySQL 5.7"
+
+# 判断是否是 noble 系统
+UBUNTU_CODENAME=$(lsb_release -cs)
+if [ "$UBUNTU_CODENAME" = "noble" ]; then
+    echo "⚠️ 当前系统是 Ubuntu 24.04 (noble)，MySQL 官方源暂未支持，切换为 jammy 源"
+    MYSQL_CODENAME="jammy"
+else
+    MYSQL_CODENAME="$UBUNTU_CODENAME"
+fi
+
+# 下载并配置 MySQL APT 源
 wget https://dev.mysql.com/get/mysql-apt-config_0.8.24-1_all.deb
 DEBIAN_FRONTEND=noninteractive dpkg -i mysql-apt-config_0.8.24-1_all.deb <<< $'1\n'
+# 替换为兼容的源版本（如果是 noble）
+sed -i "s/$UBUNTU_CODENAME/$MYSQL_CODENAME/g" /etc/apt/sources.list.d/mysql.list
+
+# 添加 MySQL GPG 公钥（使用较新方式）
+curl -fsSL https://repo.mysql.com/RPM-GPG-KEY-mysql-2023 | gpg --dearmor | tee /usr/share/keyrings/mysql.gpg >/dev/null
+sed -i 's|^deb http://repo.mysql.com|deb [signed-by=/usr/share/keyrings/mysql.gpg] http://repo.mysql.com|' /etc/apt/sources.list.d/mysql.list
+
+# 安装 MySQL 5.7
 apt update
 DEBIAN_FRONTEND=noninteractive apt install -y mysql-server
 mysql --version
